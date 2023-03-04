@@ -3,6 +3,10 @@ import React, { useState } from "react";
 function App() {
   const [todoText, setTodoText] = useState("");
   const [todos,setTodos]=useState([])
+  const [editButonunaBasildiMi,setEditButonunaBasildiMİ]=useState(false);
+  const [guncellenecekText,setGuncellenecekText] =useState("")
+  const [guncellenecekTodo, setGuncellenecekTodo] = useState(null)
+ 
   const handleSubmit = (event) => {
     event.preventDefault();
     /*validation*/
@@ -10,22 +14,34 @@ function App() {
       alert("Please type your todo!");
       return;
     }
+    console.log(todoText)
     const newTodo={
       id:new Date().getTime(),
       title: todoText,
       date: new Date(),
       hasDone: false
-    }
+    };
+    console.log(newTodo)
     setTodos([...todos,newTodo])
     setTodoText("")
   };
-  const deleteTodo=(id)=>{
-    const filteredTodos=todos.filter
-    ((i) => i.id !== id);
-    setTodos(filteredTodos);
-    }
 
+  const deleteTodo=(id)=>{
+    const filteredTodos=todos.filter ((i) => i.id !== id);
+    setTodos(filteredTodos);
+    };
     const changeHasDone =(todo)=>{
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
+      
       console.log(todo)
       let tempTodos=[]
       todos.map((item,index)=>{
@@ -50,8 +66,30 @@ function App() {
           tempTodos.push(todos[i])
         }
       } */
-      setTodos(tempTodos)
-    }  
+      setTodos(tempTodos);   
+    };
+  const todoGuncelle =(event)=>{
+    event.preventDefault()
+    console.log(guncellenecekTodo)
+    if(guncellenecekText === ""){
+      alert("TodoText can't be empty")
+      return
+    }
+    let tempTodos=[]
+    todos.map(item=>{
+      if(item.id === guncellenecekTodo.id){
+        let updatedTodo={
+          ...guncellenecekTodo,
+          title: guncellenecekText
+        }
+        tempTodos.push(updatedTodo)
+      }else{
+        tempTodos.push(item)
+      }
+    })
+    setTodos(tempTodos)
+    setEditButonunaBasildiMİ(false)
+  }   
   return (
     <div className="container my-5">
       <form onSubmit={handleSubmit}>
@@ -70,17 +108,30 @@ function App() {
           </button>
         </div>
       </form>
-      <form>
-        <div className="input-group mb-3">
-          <input className="form-control" type="text" />
-          <button className="btn btn btn-info w-25" type="submit">
-            Edit
-          </button>
-          <button className="btn btn btn-danger w-25" type="button">
-            Cancel
-          </button>
-        </div>
-      </form>
+      {editButonunaBasildiMi === true && (
+        <form onSubmit={todoGuncelle}>
+          <div className="input-group mb-3">
+            <input
+              value={guncellenecekText}
+              onChange={(event) => setGuncellenecekText(event.target.value)}
+              className="form-control"
+              type={"text"}
+            />
+            <button
+              onClick={() => {
+                setEditButonunaBasildiMİ(false);
+              }}
+              className="btn btn btn-danger w-25"
+              type="button">
+              Cancel
+            </button>
+            <button className="btn btn btn-info w-25" type="submit">
+              Save
+            </button>
+          </div>
+        </form>
+      )}
+
       <div className="container">
         {todos.length === 0 ? (
           <p className="text-center"> You don't have any todos yet.</p>
@@ -90,15 +141,13 @@ function App() {
               <div
                 key={index}
                 style={{ borderBottom: "1px solid gray" }}
-                className="d-flex justify-content-between align-items-center"
-              >
+                className="d-flex justify-content-between align-items-center">
                 <div>
                   <h1
                     style={{
                       textDecoration:
                         item.hasDone === true ? "line-through" : "none",
-                    }}
-                  >
+                    }}>
                     {item.title}{" "}
                   </h1>
                   <small>{new Date(item.date).toLocaleDateString()}</small>
@@ -108,16 +157,21 @@ function App() {
                     onClick={() => {
                       deleteTodo(item.id);
                     }}
-                    className="btn btn-sm btn-danger"
-                  >
+                    className="btn btn-sm btn-danger">
                     Delete
                   </button>
-
-                  <button className="btn btn-sm btn-secondary">Edit</button>
+                  <button
+                    onClick={() => {
+                      setEditButonunaBasildiMİ(true);
+                      setGuncellenecekText(item.title);
+                      setGuncellenecekTodo(item);
+                    }}
+                    className="btn btn-sm btn-secondary">
+                    Edit
+                  </button>
                   <button
                     onClick={() => changeHasDone(item)}
-                    className="btn btn-sm btn-success"
-                  >
+                    className="btn btn-sm btn-success">
                     {item.hasDone === false ? "Done" : "Undone"}
                   </button>
                 </div>
@@ -130,3 +184,5 @@ function App() {
   );
 }
 export default App;
+
+
